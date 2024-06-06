@@ -28,4 +28,4 @@ jobs:
       env:
         OPENWEATHERMAP_API_KEY: ${{ secrets.OPENWEATHERMAP_API_KEY }}
       run: |
-        python weather.py
+        python .github/workflows/weather.py
