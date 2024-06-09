@@ -12,61 +12,49 @@
 #  5.	W przypadku poprawnego połączenia ze stroną, podania właściwego klucza API oraz istniejącego w bazie openweathermap.org miasta użytkownik otrzymuje zwrotnie nazwę podanego miasta, aktualna temperaturę oraz stopień zachmurzenia. 
 
 try:
-    import requests
+    import requests  # Próbujemy zaimportować moduł 'requests', który jest potrzebny do wykonywania zapytań HTTP
 except ModuleNotFoundError:
     print("Moduł 'requests' nie jest zainstalowany. Zainstaluj go, wykonując 'pip install requests'.")
-    exit(1)
+    exit(1)  # Jeśli moduł nie jest zainstalowany, wyświetlamy komunikat i kończymy działanie programu
 
-import configparser
-import os
+import configparser  # Importujemy moduł 'configparser' do pracy z plikami konfiguracyjnymi
+import os  # Importujemy moduł 'os' do operacji na plikach i ścieżkach plików
 
 def pobierz_pogode(miasto, klucz_api):
-    """
-    Funkcja pobiera aktualną pogodę dla podanego miasta za pomocą API OpenWeatherMap.
-
-    Args:
-        miasto (str): Nazwa miasta, dla którego ma być pobrana pogoda.
-        klucz_api (str): Klucz API do autoryzacji w serwisie OpenWeatherMap.
-
-    Returns:
-        str: Tekst zawierający informacje o pogodzie lub komunikat o błędzie.
-    """
+    # Tworzymy URL do API OpenWeatherMap z podanym miastem i kluczem API
     url = f"https://api.openweathermap.org/data/2.5/weather?q={miasto}&appid={klucz_api}&units=metric&lang=pl"
-    response = requests.get(url)
+    response = requests.get(url)  # Wysyłamy zapytanie HTTP GET do API
 
+    # Sprawdzamy status odpowiedzi
     if response.status_code == 200:
-        dane = response.json()
-        temperatura = dane['main']['temp']
-        opis = dane['weather'][0]['description']
-        return f"Pogoda w {miasto}: {temperatura:.1f}°C, {opis}"
+        dane = response.json()  # Jeśli status 200 (OK), przekształcamy odpowiedź do formatu JSON
+        temperatura = dane['main']['temp']  # Pobieramy temperaturę z odpowiedzi
+        opis = dane['weather'][0]['description']  # Pobieramy opis pogody z odpowiedzi
+        return f"Pogoda w {miasto}: {temperatura:.1f}°C, {opis}"  # Zwracamy sformatowany tekst z wynikami
     elif response.status_code == 401:
-        return "Wystąpił błąd autoryzacji. Sprawdź poprawność klucza API."
+        return "Wystąpił błąd autoryzacji. Sprawdź poprawność klucza API."  # Błąd autoryzacji, niepoprawny klucz API
     elif response.status_code == 404:
-        return "Nie odnaleziono miasta. Sprawdź poprawność nazwy miasta."
+        return "Nie odnaleziono miasta. Sprawdź poprawność nazwy miasta."  # Błąd 404, miasto nie zostało znalezione
     else:
-        return f"Wystąpił błąd: {response.status_code}"
+        return f"Wystąpił błąd: {response.status_code}"  # Inny błąd, zwracamy kod statusu
 
 def get_api_key_from_pendrive():
-    """
-    Funkcja sprawdza wszystkie podłączone dyski i próbuje znaleźć plik config.ini z kluczem API.
-
-    Returns:
-        str: Klucz API, jeśli plik config.ini zostanie znaleziony, w przeciwnym razie None.
-    """
+    # Lista możliwych punktów montowania pendrive'a w systemie
     possible_mount_points = ['D:\\', 'E:\\', 'F:\\', 'G:\\', 'H:\\', '/mnt/usb']
     for mount_point in possible_mount_points:
-        config_path = os.path.join(mount_point, 'config.ini')
-        if os.path.exists(config_path):
-            config = configparser.ConfigParser()
-            config.read(config_path)
-            return config['openweathermap']['klucz_api']
-    return None
+        config_path = os.path.join(mount_point, 'config.ini')  # Tworzymy pełną ścieżkę do pliku konfiguracyjnego
+        if os.path.exists(config_path):  # Sprawdzamy, czy plik istnieje
+            config = configparser.ConfigParser()  # Tworzymy obiekt ConfigParser
+            config.read(config_path)  # Wczytujemy plik konfiguracyjny
+            return config['openweathermap']['klucz_api']  # Zwracamy klucz API z pliku konfiguracyjnego
+    return None  # Jeśli plik nie został znaleziony, zwracamy None
 
-# Pobranie klucza API z pliku na pendrive lub od użytkownika
+# Pobieramy klucz API z pendrive'a
 klucz_api = get_api_key_from_pendrive()
 
 if not klucz_api:
+    # Jeśli nie znaleziono klucza API na pendrive, prosimy użytkownika o jego podanie
     klucz_api = input("Nie znaleziono klucza API na pendrive. Podaj klucz API do openweathermap.org: ")
 
-miasto = input("Podaj nazwę miasta: ")
-print(pobierz_pogode(miasto, klucz_api))
+miasto = input("Podaj nazwę miasta: ")  # Prosimy użytkownika o podanie nazwy miasta
+print(pobierz_pogode(miasto, klucz_api))  # Wyświetlamy wyniki pogody dla podanego miasta
