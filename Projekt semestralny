@@ -25,7 +25,7 @@ def pobierz_pogode(miasto, klucz_api):
         dane = response.json()
         temperatura = dane['main']['temp']
         opis = dane['weather'][0]['description']
-        return f"Pogoda w {miasto}: {temperatura:.1f}°C, {opis}"
+        return f"Pogoda w {miasto}: {temperatura:.1f}°C, {opis}, wilgotność: {wilgotnosc}%, wiatr: {wiatr} m/s"
     elif response.status_code == 401:
         return "Wystąpił błąd autoryzacji. Sprawdź poprawność klucza API."
     elif response.status_code == 404:
