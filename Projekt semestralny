@@ -1,3 +1,16 @@
+
+#  Projekt: Pogoda międzynarodowa
+
+
+#  Program działa na zasadzie połączenia ze stroną openweathermap.org z której pobiera dane pogodowe.
+
+#  1.	W pierwszej kolejności sprawdza czy użytkownik posiada biblioteki requests bez których nie połączy się z internetem.
+#  2.	Sprawdza czy na którymś z dysków jest plik config.ini w którym jest zawarty klucz API.
+#  2a.  Jeżeli nie ma takiego pliku z kluczem prosi o jego ręczne podanie przez użytkownika.
+#  3.	Po wprowadzeniu odnalezieniu klucza API klucza lub jego wprowadzeniu przez użytkownika program prosi o podanie miasta.
+#  4.	Program wysyła zapytanie do strony openweathermap.org. W zapytaniu jest zawarty klucz API oraz miasto.
+#  5.	W przypadku poprawnego połączenia ze stroną, podania właściwego klucza API oraz istniejącego w bazie openweathermap.org miasta użytkownik otrzymuje zwrotnie nazwę podanego miasta, aktualna temperaturę oraz stopień zachmurzenia. 
+
 try:
     import requests
 except ModuleNotFoundError:
